@@ -1,3 +1,6 @@
+[run]
+omit = injectify/__version__.py
+
 [report]
 fail_under = 90
 show_missing = True
