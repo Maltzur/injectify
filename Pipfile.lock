@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5b4d9bbc8c000985032aff32012d37d6be911b765b79116bc0a59a568df94929"
+            "sha256": "8ef8939d58291672c761795307cd77792e09abf77b0a53ff4cf9975d453fbaec"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -54,6 +54,14 @@
             ],
             "index": "pypi",
             "version": "==0.7.12"
+        },
+        "apipkg": {
+            "hashes": [
+                "sha256:37228cda29411948b422fae072f57e31d3396d2ee1c9783775980ee9c9990af6",
+                "sha256:58587dd4dc3daefad0487f6d9ae32b4542b185e1c36db6993290e7c41ca2b47c"
+            ],
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "version": "==1.5"
         },
         "appdirs": {
             "hashes": [
@@ -181,6 +189,14 @@
                 "sha256:955f2cf538829bfcb7b3aa885ace40e8ae5965dcd5b876c384d0c5869702db1d"
             ],
             "version": "==0.25.2"
+        },
+        "execnet": {
+            "hashes": [
+                "sha256:cacb9df31c9680ec5f95553976c4da484d407e85e41c83cb812aa014f0eddc50",
+                "sha256:d4efd397930c46415f62f8a31388d6be4f27a91d7550eb79bc64a756e0056547"
+            ],
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "version": "==1.7.1"
         },
         "filelock": {
             "hashes": [
@@ -381,6 +397,14 @@
             "index": "pypi",
             "version": "==2.9.0"
         },
+        "pytest-forked": {
+            "hashes": [
+                "sha256:1805699ed9c9e60cb7a8179b8d4fa2b8898098e82d229b0825d8095f0f261100",
+                "sha256:1ae25dba8ee2e56fb47311c9638f9e58552691da87e82d25b0ce0e4bf52b7d87"
+            ],
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "version": "==1.1.3"
+        },
         "pytest-mock": {
             "hashes": [
                 "sha256:997729451dfc36b851a9accf675488c7020beccda15e11c75632ee3d1b1ccd71",
@@ -388,6 +412,14 @@
             ],
             "index": "pypi",
             "version": "==3.1.0"
+        },
+        "pytest-xdist": {
+            "hashes": [
+                "sha256:1d4166dcac69adb38eeaedb88c8fada8588348258a3492ab49ba9161f2971129",
+                "sha256:ba5ec9fde3410bd9a116ff7e4f26c92e02fa3d27975ef3ad03f330b3d4b54e91"
+            ],
+            "index": "pypi",
+            "version": "==1.32.0"
         },
         "pytz": {
             "hashes": [
