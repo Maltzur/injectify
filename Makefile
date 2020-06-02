@@ -1,3 +1,7 @@
+init:
+	pip install pipenv --upgrade
+	pipenv install --dev
+
 help:
 	@echo "init - initialize and install virtual environment"
 	@echo "clean - remove artifacts"
@@ -5,10 +9,6 @@ help:
 	@echo "coverage - check code coverage"
 	@echo "publish - package and upload a release"
 	@echo "docs - generate Sphinx HTML documentation"
-
-init:
-	pip install pipenv --upgrade
-	pipenv install --dev
 
 clean-tox:
 	rm -fr .tox/
