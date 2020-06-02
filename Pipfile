@@ -1,0 +1,21 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+alabaster = "*"
+codecov = "*"
+docutils = "*"
+detox = "*"
+"flake8" = "*"
+pytest = ">=2.8.0"
+pytest-cov = "*"
+pytest-mock = "*"
+readme-renderer = "*"
+sphinx = "*"
+tox = "*"
+
+[packages]
+astunparse = "*"
+dill = "*"
