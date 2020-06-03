@@ -3,7 +3,7 @@ from setuptools import setup
 
 requirements = [
     'astunparse>=1.1.0',
-    'dill>=3.0.0,'
+    'dill>=3.0.0',
 ]
 
 about = {}
@@ -11,7 +11,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'injectify', '__version__.py'), 'r') as f:
     exec(f.read(), about)
 
-with open('README.md', encoding='utf-8') as readme_file:
+with open('README.rst', encoding='utf-8') as readme_file:
     readme = readme_file.read()
 
 setup(
