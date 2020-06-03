@@ -21,9 +21,6 @@ Basic Example:
 
     print(foo(10))  # 9000
 
-Injectify allows you to merge code that you have written into a target object.
-Injectors are used to define the point at which your code will be merged into.
-
 
 Supported Features
 --------------------
