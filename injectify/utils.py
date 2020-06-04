@@ -1,9 +1,6 @@
 import ast
-import importlib
 import inspect
-import sys
 from textwrap import dedent
-from types import CodeType, FunctionType
 
 import dill
 
@@ -15,35 +12,6 @@ def parse_object(obj):
             return ast.parse(source)
         except IndentationError:
             source = dedent(source)
-
-
-# unused
-def find_nested_func(parent, child_name):
-    """Return the function named <child_name> that is defined inside a <parent>
-    function.
-
-    Returns None if nonexistent.
-    """
-    consts = parent.__code__.co_consts
-    for item in consts:
-        if isinstance(item, CodeType) and item.co_name == child_name:
-            return FunctionType(item, globals())
-
-
-# unused
-def import_code(module, code):
-    """Code can be any object containing code -- string, file obj, or compiled
-    code object. Returns a new module initialized by dynamically importing the
-    given code and adds it to sys.modules under the given module's name.
-    """
-    mod_file = dill.source.getfile(module)
-    exec(compile(code, mod_file, 'exec', dont_inherit=True), vars(module))
-
-    name = dill.source.getname(module)
-    sys.modules[name] = module
-    globals()[name] = module
-    importlib.invalidate_caches()
-    return module
 
 
 def get_class_that_defined_method(meth):
