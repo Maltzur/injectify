@@ -20,7 +20,7 @@ readme-renderer = "*"
 sphinx = "*"
 tox = "*"
 twine = "<=1.15.0"
-zipp = {version = ">=1.2.0", markers = "python_version < '3.8'"}
+zipp = {version = "<=1.2.0", markers = "python_version < '3.8'"}
 
 [packages]
 astunparse = ">=1.1.0"
