@@ -2,6 +2,10 @@
 Injectify
 =========
 
+.. image:: https://img.shields.io/pypi/v/injectify.svg
+    :target: https://pypi.org/project/injectify/
+.. image:: https://img.shields.io/pypi/pyversions/cookiecutter.svg
+    :target: https://pypi.org/project/injectify/
 .. image:: https://api.travis-ci.com/Maltzur/injectify.svg?branch=master
     :target: https://travis-ci.com/Maltzur/injectify
 .. image:: https://codecov.io/gh/Maltzur/injectify/branch/master/graphs/badge.svg?branch=master
