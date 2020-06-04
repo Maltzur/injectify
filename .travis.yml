@@ -5,6 +5,8 @@ install: make
 script:
   - make test-readme
   - make ci
+after_success:
+  - codecov
 cache: pip
 jobs:
   include:
@@ -20,6 +22,3 @@ jobs:
     # - stage: test
     #   python: 'pypy3'
     #   dist: xenial
-    - stage: coverage
-      python: '3.6'
-      script: make coverage

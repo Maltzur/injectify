@@ -43,7 +43,7 @@ test:
 .PHONY: ci
 ci:
 	@echo "+ $@"
-	@pipenv run pytest -n 8 --boxed --junitxml=report.xml
+	@pipenv run pytest --cov-config .coveragerc --verbose --cov-report term --cov-report xml --cov=injectify tests
 
 .PHONY: test-readme
 test-readme:
