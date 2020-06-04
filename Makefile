@@ -1,6 +1,9 @@
-NC='\033[0m'
+PYPI_SERVER = testpypi
+
+NC= \033[0m
 RED = \033[0;31m
 GREEN = \033[0;32m
+BLUE = \033[0;34m
 
 init:
 	@echo "+ $@"
@@ -49,7 +52,9 @@ ci:
 test-readme:
 	@echo "+ $@"
 	@$(MAKE) build
-	@pipenv run twine check dist/* && ([ $$? -eq 0 ] && echo "${GREEN}Markup OK${NC}") || echo "${RED}Invalid markup!${NC}"
+	@echo "${BLUE}"
+	@pipenv run twine check dist/*
+	@echo "${NC}"
 	@$(MAKE) clean-build
 
 .PHONY: lint
@@ -66,7 +71,7 @@ coverage:
 publish:
 	@echo "+ $@"
 	@$(MAKE) build
-	@pipenv run twine upload dist/*
+	@pipenv run twine upload -r ${PYPI_SERVER} dist/*
 	@$(MAKE) clean-build
 
 .PHONY: docs
