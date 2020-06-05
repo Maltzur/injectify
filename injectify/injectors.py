@@ -68,6 +68,12 @@ class BaseInjector(ABC, ast.NodeTransformer):
         return dill.source.ismodule(self.target)
 
     def compile(self, tree):
+        def inject_code(f):
+            # Used to allow injection multiple times in a
+            # single object, b/c inject.findsource() reads
+            # the actual source file
+            f.__inject_code__ = code if self.save_state else target_src
+
         target_name = dill.source.getname(self.target)
         target_file = dill.source.getfile(self.target)
         target_src = dill.source.getsource(self.target)
@@ -80,13 +86,9 @@ class BaseInjector(ABC, ast.NodeTransformer):
         compiled_func = _locals[target_name]
 
         try:
-            # Used to allow injection multiple times in a
-            # single object, b/c inject.findsource() reads
-            # the actual source file
-            self.target.__inject_code__ = code if self.save_state else target_src
-
             # If function has code object, simply replace it
             self.target.__code__ = compiled_func.__code__
+            inject_code(self.target)
         except AttributeError:
             # Attempt to the class that the function is defined in
             meth_mod = get_class_that_defined_method(self.target)
@@ -94,12 +96,7 @@ class BaseInjector(ABC, ast.NodeTransformer):
                 # If function is not defined in a class, or the target is not a function
                 meth_mod = dill.source.getmodule(self.target)
 
-            if self.save_state:
-                # Used to allow injection multiple times in a
-                # single object, b/c inject.findsource() reads
-                # the actual source file
-                compiled_func.__inject_code__ = code
-
+            inject_code(compiled_func)
             setattr(meth_mod, target_name, compiled_func)
 
     @abstractmethod
