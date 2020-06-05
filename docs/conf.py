@@ -12,7 +12,8 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.dirname(os.getcwd()))
+dirname = os.path.dirname(os.getcwd())
+sys.path.insert(0, dirname)
 
 # -- Project information -----------------------------------------------------
 
@@ -20,10 +21,13 @@ project = 'injectify'
 copyright = '2020, Mitchell Marsden'
 author = 'Mitchell Marsden'
 
+about = {}
+with open(os.path.join(dirname, 'injectify', '__version__.py'), 'r') as f:
+    exec(f.read(), about)
 # The short X.Y version
-version = '0.1.0'
+version = about['__version__']
 # The full version, including alpha/beta/rc tags
-release = '0.1.0'
+release = about['__version__']
 
 # -- General configuration ---------------------------------------------------
 
