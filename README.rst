@@ -10,6 +10,8 @@ Injectify
     :target: https://travis-ci.com/Maltzur/injectify
 .. image:: https://codecov.io/gh/Maltzur/injectify/branch/master/graphs/badge.svg?branch=master
     :target: https://codecov.io/gh/Maltzur/injectify
+.. image:: https://readthedocs.org/projects/injectify/badge/?version=latest
+    :target: https://injectify.readthedocs.io/en/latest/?badge=latest
 .. image:: https://img.shields.io/scrutinizer/g/Maltzur/injectify.svg
     :target: https://scrutinizer-ci.com/g/Maltzur/injectify/?branch=master
 
