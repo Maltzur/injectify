@@ -1,6 +1,6 @@
 """
 injectify.api
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 This module contains the apis that power Injectify.
 """

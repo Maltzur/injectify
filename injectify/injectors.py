@@ -1,6 +1,6 @@
 """
 injectify.injectors
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 This module contains the model objects that power Injectify.
 """

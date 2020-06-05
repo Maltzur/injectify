@@ -6,17 +6,36 @@
 Welcome to injectify's documentation!
 =====================================
 
-**injectify**
+Injectify allows you to merge code that you have written into a target object.
+
+Basics
+------
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
+   README
 
+.. _apiref:
 
-Indices and tables
-==================
+API Reference
+-------------
+
+.. toctree::
+   :maxdepth: 2
+
+   injectify
+
+Project Info
+------------
+
+.. toctree::
+   :maxdepth: 2
+
+   HISTORY
+
+Index
+-----
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`

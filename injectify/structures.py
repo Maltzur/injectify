@@ -1,6 +1,6 @@
 """
 injectify.structures
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 This module contains the data structures that power Injectify.
 """
