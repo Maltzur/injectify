@@ -20,11 +20,10 @@ project = 'injectify'
 copyright = '2020, Mitchell Marsden'
 author = 'Mitchell Marsden'
 
-from injectify import __version__  # noqa: E402
 # The short X.Y version
-version = __version__.__version__
+version = '0.1.0'
 # The full version, including alpha/beta/rc tags
-release = __version__.__version__
+release = '0.1.0'
 
 # -- General configuration ---------------------------------------------------
 
