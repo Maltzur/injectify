@@ -21,9 +21,11 @@ project = 'injectify'
 copyright = '2020, Mitchell Marsden'
 author = 'Mitchell Marsden'
 
+from injectify import __version__  # noqa: E402
+# The short X.Y version
+version = __version__.__version__
 # The full version, including alpha/beta/rc tags
-release = '0.1.0'
-
+release = __version__.__version__
 
 # -- General configuration ---------------------------------------------------
 
@@ -41,6 +43,8 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+# The master toctree document.
+master_doc = 'index'
 
 # -- Options for HTML output -------------------------------------------------
 
