@@ -2,6 +2,8 @@
 Injectify
 =========
 
+.. image:: https://img.shields.io/pypi/l/injectify.svg
+    :target: https://pypi.org/project/injectify/
 .. image:: https://img.shields.io/pypi/v/injectify.svg
     :target: https://pypi.org/project/injectify/
 .. image:: https://img.shields.io/pypi/pyversions/cookiecutter.svg
