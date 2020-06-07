@@ -3,7 +3,7 @@ from setuptools import setup
 
 requirements = [
     'astunparse>=1.1.0',
-    'dill>=3.0.0',
+    'dill>=0.3.0',
 ]
 
 about = {}
