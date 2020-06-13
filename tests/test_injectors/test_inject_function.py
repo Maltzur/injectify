@@ -1,7 +1,11 @@
-# noqs: F841
 from injectify.api import inject
 from injectify.injectors import (
-    HeadInjector, TailInjector, ReturnInjector, FieldInjector, NestedInjector)
+    HeadInjector,
+    TailInjector,
+    ReturnInjector,
+    FieldInjector,
+    NestedInjector,
+)
 
 
 def test_head_injector_correctly_injects_function():
@@ -107,7 +111,9 @@ def test_field_injector_correctly_injects_function_before_ordinal_field():
             y = x + 2
         return y
 
-    @inject(target=target, injector=FieldInjector('y', ordinal=1, insert='before'))
+    @inject(
+        target=target, injector=FieldInjector('y', ordinal=1, insert='before'),
+    )
     def handler():
         x += 1
 
@@ -136,6 +142,7 @@ def test_nested_injector_correctly_injects_function():
         def nested(y):
             if y > 100:
                 return y
+
         if x < 200:
             return nested(x)
 
