@@ -1,15 +1,21 @@
 """This module contains the model objects that power Injectify."""
 
 import ast
+import inspect
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from functools import wraps
 
 import astunparse
-import dill
 
+from .inspect_mate import extract_wrapped, getsource
 from .structures import listify
-from .utils import parse_object, tryattrs, get_class_that_defined_method
+from .utils import (
+    parse_object,
+    tryattrs,
+    get_defining_class,
+    caninject,
+)
 
 
 def count_visit(f):
@@ -17,6 +23,9 @@ def count_visit(f):
 
     @wraps(f)
     def wrapper(self, node):
+        if not hasattr(self, '_visit_counter'):
+            self._visit_counter = defaultdict(int)
+
         if f.__name__ not in self._visit_counter:
             # B/c increment happens before function call,
             # initialize at -1
@@ -25,6 +34,7 @@ def count_visit(f):
         self._visit_counter[f.__name__] += 1
         r = f(self, node, self._visit_counter[f.__name__])
         return r
+
     return wrapper
 
 
@@ -37,28 +47,20 @@ class BaseInjector(ABC, ast.NodeTransformer):
     """
 
     def __init__(self, save_state=True):
-        #: bool, if target object should allow multiple injections
         self.save_state = save_state
-
-        self._visit_counter = defaultdict(int)
 
     def prepare(self, target, handler):
         """Prepares the injector with the given parameters."""
         self.prepare_target(target)
         self.prepare_handler(handler)
 
-    @staticmethod
-    def caninject(obj):
-        """Return true if code can be injected into object."""
-        return not (dill.source.ismodule(obj)
-                    or dill.source.isclass(obj)
-                    or dill.source.ismethod(obj)
-                    or dill.source.isfunction(obj))
-
     def prepare_target(self, target):
         """Prepares the given target object."""
+        if caninject(target):
             raise TypeError('cannot inject to type {!r}', type(target))
-        self.target = target
+
+        wrapped = extract_wrapped(target)
+        self.target = wrapped or target
 
     def prepare_handler(self, handler):
         """Prepares the given handler function."""
@@ -71,6 +73,7 @@ class BaseInjector(ABC, ast.NodeTransformer):
 
     def is_target_module(self):
         """Check whether the target object is a module."""
+        return inspect.ismodule(self.target)
 
     def compile(self, tree):
         """Recompile the target object with the handler."""
@@ -81,30 +84,37 @@ class BaseInjector(ABC, ast.NodeTransformer):
             # the actual source file
             f.__inject_code__ = code if self.save_state else target_src
 
-        target_name = dill.source.getname(self.target)
-        target_file = dill.source.getfile(self.target)
-        target_src = dill.source.getsource(self.target)
+        target_name = self.target.__name__
+        target_file = inspect.getfile(self.target)
+        target_src = getsource(self.target)
 
+        # Find the ast node with the same name as our target object and get the
+        # source code
         node = next(x for x in tree.body if getattr(x, 'name', None) == target_name)
+        if hasattr(node, 'decorator_list'):
+            # Don't want to compile the decorators
+            node.decorator_list = []
         code = astunparse.unparse(node)
 
+        # Compile the new object
         _locals = {}
-        exec(compile(code, target_file, 'exec', dont_inherit=True), {},  _locals)
-        compiled_func = _locals[target_name]
+        exec(compile(code, target_file, 'exec'), _locals)
+        compiled_obj = _locals[target_name]
 
+        # Replace the old code with the new code
         try:
             # If function has code object, simply replace it
-            self.target.__code__ = compiled_func.__code__
+            self.target.__code__ = compiled_obj.__code__
             inject_code(self.target)
         except AttributeError:
             # Attempt to the class that the function is defined in
-            meth_mod = get_class_that_defined_method(self.target)
+            meth_mod = get_defining_class(self.target)
             if not meth_mod:
                 # If function is not defined in a class, or the target is not a function
-                meth_mod = dill.source.getmodule(self.target)
+                meth_mod = inspect.getmodule(self.target)
 
-            inject_code(compiled_func)
-            setattr(meth_mod, target_name, compiled_func)
+            inject_code(compiled_obj)
+            setattr(meth_mod, target_name, compiled_obj)
 
     @abstractmethod
     def inject(self, node):
@@ -158,6 +168,8 @@ class HeadInjector(BaseInjector):
     def visit_FunctionDef(self, node):
         """Visit a ``FunctionDef`` node."""
         return self._visit(node)
+
+    visit_AsyncFunctionDef = visit_FunctionDef
 
     def _visit(self, node):
         return ast.fix_missing_locations(self.inject(node))
@@ -218,6 +230,8 @@ class TailInjector(BaseInjector):
         """Visit a ``FunctionDef`` node."""
         return self._visit(node)
 
+    visit_AsyncFunctionDef = visit_FunctionDef
+
     def _visit(self, node):
         return ast.fix_missing_locations(self.inject(node))
 
@@ -275,7 +289,6 @@ class ReturnInjector(BaseInjector):
     """
 
     def __init__(self, ordinal=None, *args, **kwargs):
-        #: zero-based index to choose specific target
         self.ordinal = listify(ordinal)
 
         super().__init__(*args, **kwargs)
@@ -283,6 +296,7 @@ class ReturnInjector(BaseInjector):
     @count_visit
     def visit_Return(self, node, visit_count):
         """Visit a ``Return`` node."""
+        if not self.ordinal or visit_count in self.ordinal:
             return ast.copy_location(self.inject(node), node)
         self.generic_visit(node)
         return node
@@ -341,16 +355,12 @@ class FieldInjector(BaseInjector):
     """
 
     def __init__(self, field, ordinal=None, insert=None, *args, **kwargs):
-        #: the field to inject at
-        self.field = field
-        #: zero-based index to choose specific target
-        self.ordinal = listify(ordinal)
-        #: where to insert the handler's code relative to target
-        self.insert = insert
-
-        self._field_counter = defaultdict(int)
-
         super().__init__(*args, **kwargs)
+
+        self.field = field
+        self.ordinal = listify(ordinal)
+        self.insert = insert
+        self._field_counter = defaultdict(int)
 
     def visit_Assign(self, node):
         """Visit an ``Assign`` node."""
@@ -359,7 +369,7 @@ class FieldInjector(BaseInjector):
         if any(field == tryattrs(t, 'id', 'attr') for t in node.targets):
             field_count = self._field_counter[field]
             self._field_counter[field] += 1
-            if (not self.ordinal or field_count in self.ordinal):
+            if not self.ordinal or field_count in self.ordinal:
                 return ast.copy_location(self.inject(node), node)
         self.generic_visit(node)
         return node
@@ -418,12 +428,10 @@ class NestedInjector(BaseInjector):
     """
 
     def __init__(self, nested, injector, *args, **kwargs):
-        #: name of the nested function
-        self.nested = nested
-        #: injector to use in the nested function
-        self.injector = injector
-
         super().__init__(*args, **kwargs)
+
+        self.nested = nested
+        self.injector = injector
 
     def prepare(self, target, handler):
         """Prepares the injector and the nested injector with the given
@@ -437,6 +445,8 @@ class NestedInjector(BaseInjector):
             return ast.fix_missing_locations(self.inject(node))
         self.generic_visit(node)
         return node
+
+    visit_AsyncFunctionDef = visit_FunctionDef
 
     def inject(self, node):
         """Inject the handler into the nested function with the given injector."""

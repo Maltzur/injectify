@@ -51,9 +51,8 @@ build:
 
 .PHONY: test
 test:
-	# This runs all of the tests.
 	@echo "+ $@"
-	@detox
+	@tox --parallel
 
 .PHONY: ci
 ci:
@@ -74,17 +73,17 @@ lint:
 	@echo "+ $@"
 	@pipenv run flake8 injectify tests
 
-.PHONY: coverage
-coverage:
-	@echo "+ $@"
-	@pipenv run pytest --cov-config .coveragerc --verbose --cov-report term --cov-report xml --cov=injectify tests
-
 .PHONY: publish
 publish:
 	@echo "+ $@"
 	@$(MAKE) build
 	@pipenv run twine upload -r ${PYPI_SERVER} dist/*
 	@$(MAKE) clean-build
+
+.PHONY: watchdocs
+watchdocs:
+	@echo "+ $@"
+	@pipenv run watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 .PHONY: docs
 docs:
