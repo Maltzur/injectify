@@ -1,25 +1,29 @@
-.. injectify documentation master file, created by
-   sphinx-quickstart on Tue Jun  2 16:02:58 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Welcome to Injectify
+=====================
 
-Welcome to injectify's documentation!
-=====================================
+Welcome to Injectify's documentation! Get started with :doc:`installation` and
+then get an overview with the :doc:`quickstart`. More information on a
+specific function, class, or method can be found in the
+:doc:`injectify` section.
 
-Injectify allows you to merge code that you have written into a target object.
+User Guide
+----------
 
-Basics
-------
+This part of the documentation, which is mostly prose, begins with some
+background information about Flask, then focuses on step-by-step
+instructions for getting the most out of Injectify.
 
 .. toctree::
    :maxdepth: 2
 
-   README
-
-.. _apiref:
+   installation
+   quickstart
 
 API Reference
 -------------
+
+If you are looking for information on a specific function, class or method,
+this part of the documentation is for you.
 
 .. toctree::
    :maxdepth: 2
@@ -29,10 +33,13 @@ API Reference
 Project Info
 ------------
 
+Design notes, legal information and changelog are here for the interested.
+
 .. toctree::
    :maxdepth: 2
 
    HISTORY
+   LICENSE
 
 Index
 -----

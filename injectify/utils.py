@@ -1,3 +1,5 @@
+"""This module contains the utility functions that power Injectify."""
+
 import ast
 import inspect
 from textwrap import dedent
@@ -6,7 +8,7 @@ import dill
 
 
 def parse_object(obj):
-    source = getattr(obj, '__inject_code__', dill.source.getsource(obj))
+    """Parse the source into an AST node."""
     for _ in range(5):
         try:
             return ast.parse(source)
@@ -32,6 +34,7 @@ def get_class_that_defined_method(meth):
 
 
 def tryattrs(obj, *attrs):
+    """Return the first value of the named attributes found of the given object."""
     for attr in attrs:
         try:
             return getattr(obj, attr)

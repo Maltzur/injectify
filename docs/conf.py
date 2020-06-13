@@ -15,15 +15,16 @@ import sys
 dirname = os.path.dirname(os.getcwd())
 sys.path.insert(0, dirname)
 
-# -- Project information -----------------------------------------------------
-
-project = 'injectify'
-copyright = '2020, Mitchell Marsden'
-author = 'Mitchell Marsden'
-
 about = {}
 with open(os.path.join(dirname, 'injectify', '__version__.py'), 'r') as f:
     exec(f.read(), about)
+
+# -- Project information -----------------------------------------------------
+
+project = about['__title__']
+copyright = about['__copyright__']
+author = about['__author__']
+
 # The short X.Y version
 version = about['__version__']
 # The full version, including alpha/beta/rc tags
@@ -36,6 +37,8 @@ release = about['__version__']
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.autosectionlabel',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
