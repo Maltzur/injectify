@@ -55,6 +55,7 @@ Features
 --------
 
 Injectify can inject the following objects:
+
 * classes
 * functions
 * nested functions
