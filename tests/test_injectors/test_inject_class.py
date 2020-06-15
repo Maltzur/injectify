@@ -62,9 +62,9 @@ def test_field_injector_correctly_injects_class_after_field():
     def handler():
         y = 25
 
-    assert cls37.x == 10
-    assert cls37().x == 10
-    assert cls37.y == 25
-    assert cls37().y == 25
-    assert cls37.z == 30
-    assert cls37().z == 30
+    assert cls54.x == 10
+    assert cls54().x == 10
+    assert cls54.y == 25
+    assert cls54().y == 25
+    assert cls54.z == 30
+    assert cls54().z == 30
