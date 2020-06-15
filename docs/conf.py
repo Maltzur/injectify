@@ -12,18 +12,23 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.dirname(os.getcwd()))
+dirname = os.path.dirname(os.getcwd())
+sys.path.insert(0, dirname)
+
+about = {}
+with open(os.path.join(dirname, 'injectify', '__version__.py'), 'r') as f:
+    exec(f.read(), about)
 
 # -- Project information -----------------------------------------------------
 
-project = 'injectify'
-copyright = '2020, Mitchell Marsden'
-author = 'Mitchell Marsden'
+project = about['__title__']
+copyright = about['__copyright__']
+author = about['__author__']
 
 # The short X.Y version
-version = '0.1.0'
+version = about['__version__']
 # The full version, including alpha/beta/rc tags
-release = '0.1.0'
+release = about['__version__']
 
 # -- General configuration ---------------------------------------------------
 
@@ -31,6 +36,9 @@ release = '0.1.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.autosectionlabel',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -49,7 +57,7 @@ master_doc = 'index'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

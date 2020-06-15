@@ -5,6 +5,18 @@ RED = \033[0;31m
 GREEN = \033[0;32m
 BLUE = \033[0;34m
 
+define BROWSER_PYSCRIPT
+import os, webbrowser, sys
+try:
+	from urllib import pathname2url
+except:
+	from urllib.request import pathname2url
+
+webbrowser.open('file://{}'.format(pathname2url(os.path.abspath(sys.argv[1]))))
+endef
+export BROWSER_PYSCRIPT
+BROWSER := python -c "$$BROWSER_PYSCRIPT"
+
 init:
 	@echo "+ $@"
 	@pip install pipenv --upgrade
@@ -39,9 +51,8 @@ build:
 
 .PHONY: test
 test:
-	# This runs all of the tests.
 	@echo "+ $@"
-	@detox
+	@tox --parallel
 
 .PHONY: ci
 ci:
@@ -62,11 +73,6 @@ lint:
 	@echo "+ $@"
 	@pipenv run flake8 injectify tests
 
-.PHONY: coverage
-coverage:
-	@echo "+ $@"
-	@pipenv run pytest --cov-config .coveragerc --verbose --cov-report term --cov-report xml --cov=injectify tests
-
 .PHONY: publish
 publish:
 	@echo "+ $@"
@@ -74,8 +80,17 @@ publish:
 	@pipenv run twine upload -r ${PYPI_SERVER} dist/*
 	@$(MAKE) clean-build
 
+.PHONY: watchdocs
+watchdocs:
+	@echo "+ $@"
+	@pipenv run watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+
 .PHONY: docs
 docs:
 	@echo "+ $@"
-	@cd docs && pipenv run make html
-	@echo "\033[95m\n\nBuild successful! View the docs homepage at docs/_build/html/index.html.\n\033[0m"
+	@rm -f docs/injectify.rst
+	@pipenv run sphinx-apidoc -o docs/ injectify
+	@rm -f docs/modules.rst
+	@pipenv run $(MAKE) -C docs clean
+	@pipenv run $(MAKE) -C docs html
+	@pipenv run $(BROWSER) docs/_build/html/index.html

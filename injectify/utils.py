@@ -1,15 +1,15 @@
-import ast
-import importlib
-import inspect
-import sys
-from textwrap import dedent
-from types import CodeType, FunctionType
+"""This module contains the utility functions that power Injectify."""
 
-import dill
+import ast
+import inspect
+from textwrap import dedent
+
+from .inspect_mate import getsource
 
 
 def parse_object(obj):
-    source = getattr(obj, '__inject_code__', dill.source.getsource(obj))
+    """Parse the source into an AST node."""
+    source = getsource(obj)
     for _ in range(5):
         try:
             return ast.parse(source)
@@ -17,57 +17,45 @@ def parse_object(obj):
             source = dedent(source)
 
 
-# unused
-def find_nested_func(parent, child_name):
-    """Return the function named <child_name> that is defined inside a <parent>
-    function.
-
-    Returns None if nonexistent.
-    """
-    consts = parent.__code__.co_consts
-    for item in consts:
-        if isinstance(item, CodeType) and item.co_name == child_name:
-            return FunctionType(item, globals())
-
-
-# unused
-def import_code(module, code):
-    """Code can be any object containing code -- string, file obj, or compiled
-    code object. Returns a new module initialized by dynamically importing the
-    given code and adds it to sys.modules under the given module's name.
-    """
-    mod_file = dill.source.getfile(module)
-    exec(compile(code, mod_file, 'exec', dont_inherit=True), vars(module))
-
-    name = dill.source.getname(module)
-    sys.modules[name] = module
-    globals()[name] = module
-    importlib.invalidate_caches()
-    return module
-
-
-def get_class_that_defined_method(meth):
-    if dill.source.ismethod(meth):
-        for cls in inspect.getmro(meth.__self__.__class__):
-            if cls.__dict__.get(meth.__name__) is meth:
+def get_defining_class(obj):
+    """Return the class that defines the given object or ``None`` if there is
+    no class."""
+    if inspect.ismethod(obj):
+        for cls in inspect.getmro(obj.__self__.__class__):
+            if cls.__dict__.get(obj.__name__) is obj:
                 return cls
-        meth = meth.__func__  # fallback to __qualname__ parsing
-    if dill.source.isfunction(meth):
-        class_name = meth.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0]
+        obj = obj.__func__  # fallback to __qualname__ parsing
+    if inspect.isfunction(obj):
+        class_name = obj.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)[0]
         try:
-            cls = getattr(dill.source.getmodule(meth), class_name)
+            cls = getattr(inspect.getmodule(obj), class_name)
         except AttributeError:
-            cls = meth.__globals__.get(class_name)
+            cls = obj.__globals__.get(class_name)
         if isinstance(cls, type):
             return cls
-    return getattr(meth, '__objclass__', None)  # handle special descriptor objects
+    if inspect.isclass(obj):
+        class_path = obj.__qualname__.split('.<locals>', 1)[0].rsplit('.', 1)
+        parent = inspect.getmodule(obj)
+        for p in class_path[:-1]:
+            parent = getattr(parent, p)
+        return parent
+    return getattr(obj, '__objclass__', None)  # handle special descriptor objects
 
 
 def tryattrs(obj, *attrs):
+    """Return the first value of the named attributes found of the given object."""
     for attr in attrs:
         try:
             return getattr(obj, attr)
         except AttributeError:
             pass
-    obj_name = dill.source.getname(obj)
+    obj_name = obj.__name__
     raise AttributeError("'{}' object has no attribute in {}", obj_name, attrs)
+
+
+def caninject(obj):
+    """Check whether the given object can be injected with code."""
+    return not (inspect.ismodule(obj)
+                or inspect.isclass(obj)
+                or inspect.ismethod(obj)
+                or inspect.isfunction(obj))
