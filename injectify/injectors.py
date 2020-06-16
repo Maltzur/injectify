@@ -4,7 +4,6 @@ import ast
 import inspect
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from functools import wraps
 
 import astunparse
 
@@ -18,10 +17,7 @@ from .utils import (
 )
 
 
-def count_visit(f):
-    """Count objnumber of times a method has been called."""
-
-    @wraps(f)
+def _count_visit(f):
     def wrapper(self, node):
         if not hasattr(self, '_visit_counter'):
             self._visit_counter = defaultdict(int)
@@ -293,7 +289,7 @@ class ReturnInjector(BaseInjector):
 
         super().__init__(*args, **kwargs)
 
-    @count_visit
+    @_count_visit
     def visit_Return(self, node, visit_count):
         """Visit a ``Return`` node."""
         if not self.ordinal or visit_count in self.ordinal:
