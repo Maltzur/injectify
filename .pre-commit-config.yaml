@@ -3,6 +3,7 @@ repos:
     rev: 19.10b0
     hooks:
       - id: black
+        args: [-S]
         language_version: python3
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.1.0
@@ -26,3 +27,4 @@ repos:
     rev: 0.1.0
     hooks:
       - id: pipenv-lock
+        files: Pipfile
