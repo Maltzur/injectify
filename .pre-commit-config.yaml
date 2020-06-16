@@ -22,8 +22,7 @@ repos:
           - flake8-absolute-import
           - flake8-black
           - flake8-docstrings
-  - repo: https://github.com/gsemet/pipenv-to-requirements
-    rev: 0.9.0
+  - repo: https://github.com/d-ryzhikov/pipenv-lock-pre-commit
+    rev: 0.1.0
     hooks:
-      - id: pipenv_to_requirements
-        language_version: python3
+      - id: pipenv-lock
