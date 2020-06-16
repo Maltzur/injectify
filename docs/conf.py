@@ -15,6 +15,8 @@ import sys
 dirname = os.path.dirname(os.getcwd())
 sys.path.insert(0, dirname)
 
+import injectify  # noqa: F401, E402
+
 about = {}
 with open(os.path.join(dirname, 'injectify', '__version__.py'), 'r') as f:
     exec(f.read(), about)
