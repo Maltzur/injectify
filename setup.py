@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+"""Injectify distutils configuration."""
+
 import os
 from setuptools import setup
 
@@ -25,7 +28,7 @@ setup(
     packages=['injectify'],
     package_dir={'injectify': 'injectify'},
     include_package_data=True,
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     install_requires=requirements,
     license=about['__license__'],
     zip_safe=False,

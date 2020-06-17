@@ -1,3 +1,4 @@
+"""Injectify package version."""
 #  _____      _           _   _  __
 # |_   _|    (_)         | | (_)/ _|
 #   | | _ __  _  ___  ___| |_ _| |_ _   _
@@ -8,7 +9,7 @@
 #          |__/                     |___/
 
 __title__ = 'injectify'
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 __description__ = 'Python Code Injection Library'
 __url__ = 'https://github.com/Maltzur/injectify'
 __author__ = 'Mitchell Marsden'

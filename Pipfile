@@ -18,9 +18,9 @@ readme-renderer = "*"
 sphinx = "*"
 sphinx-rtd-theme = ">=0.4.3"
 tox = "*"
-twine = "<=1.15.0"
+twine = "*"
 watchdog = {extras = ["watchmedo"], version = "*"}
-zipp = {version = "<=1.2.0", markers = "python_version < '3.8'"}
+zipp = {version = "*", markers = "python_version < '3.8'"}
 
 [packages]
 injectify = {path = ".", editable = true}
