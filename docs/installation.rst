@@ -10,8 +10,6 @@ Dependencies
 ------------
 
 These packages will be installed automatically with Injectify.
-If you don't have ``pipenv``, head over the Pipenv website for installation
-instructions.
 
 * `astunparse`_ is an AST unparser for Python.
 
