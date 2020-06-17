@@ -2,4 +2,4 @@ version: 2
 
 python:
   install:
-    - method: setuptools
+    - requirements: requirements.txt
