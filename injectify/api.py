@@ -2,12 +2,10 @@
 
 
 def inject(target, injector):
-    """A decorator that injects code in the target object.
+    """Decorate a function to inject that code into the target object.
 
-    Args:
-        target: The object to inject code into.
-        injector: A :class:`~injectify.injectors.BaseInjector` to represent an
-            injection point.
+    :param target: The object to inject code into.
+    :param injector: The :class:`~injectify.injectors.BaseInjector`.
     """
 
     def decorator(f):

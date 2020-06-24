@@ -1,3 +1,5 @@
+"""Documentation build configuration file."""
+
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -12,6 +14,7 @@
 
 import os
 import sys
+
 dirname = os.path.dirname(os.getcwd())
 sys.path.insert(0, dirname)
 

@@ -12,10 +12,26 @@ injectify.api module
    :undoc-members:
    :show-inheritance:
 
+injectify.exceptions module
+---------------------------
+
+.. automodule:: injectify.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 injectify.injectors module
 --------------------------
 
 .. automodule:: injectify.injectors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+injectify.inspect\_mate module
+------------------------------
+
+.. automodule:: injectify.inspect_mate
    :members:
    :undoc-members:
    :show-inheritance:

@@ -4,12 +4,13 @@ import ast
 import inspect
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from functools import partial
 
 import astunparse
 
-from .inspect_mate import extract_wrapped, getsource
-from .structures import listify
-from .utils import (
+from injectify.inspect_mate import extract_wrapped, getsource
+from injectify.structures import listify
+from injectify.utils import (
     parse_object,
     tryattrs,
     get_defining_class,
@@ -37,21 +38,20 @@ def _count_visit(f):
 class BaseInjector(ABC, ast.NodeTransformer):
     """An abstract class that identifies an injection point.
 
-    Args:
-        save_state: Whether or not the target object should allow multiple
-            injections.
+    :param save_state: (optional) Boolean. Enable/disable future injections
+        from adding onto previous injections. Defaults to ``True``.
     """
 
     def __init__(self, save_state=True):
         self.save_state = save_state
 
     def prepare(self, target, handler):
-        """Prepares the injector with the given parameters."""
+        """Prepare the injector with the given parameters."""
         self.prepare_target(target)
         self.prepare_handler(handler)
 
     def prepare_target(self, target):
-        """Prepares the given target object."""
+        """Prepare the given target object."""
         if caninject(target):
             raise TypeError('cannot inject to type {!r}', type(target))
 
@@ -59,7 +59,7 @@ class BaseInjector(ABC, ast.NodeTransformer):
         self.target = wrapped or target
 
     def prepare_handler(self, handler):
-        """Prepares the given handler function."""
+        """Prepare the given handler function."""
         node = parse_object(handler)
         self.handler = node.body[0].body
 
@@ -121,7 +121,8 @@ class BaseInjector(ABC, ast.NodeTransformer):
 class HeadInjector(BaseInjector):
     """An injector that injects code at the top of the object.
 
-    **Usage**
+    :example:
+
         .. code-block::
 
             from injectify import inject, HeadInjector
@@ -149,26 +150,24 @@ class HeadInjector(BaseInjector):
         """Visit a ``Module`` node.
 
         If the target object is a module then inject the handler in this node,
-        else keep traversing. This is because the root of the AST will be this
-        node for code parsed using the `exec` mode.
+        otherwise keep traversing. The root of the AST will always be a
+        `Module`; therefore, if the target is something different then we skip
+        this visit.
         """
         if self.is_target_module():
             return self._visit(node)
         self.generic_visit(node)
         return node
 
-    def visit_ClassDef(self, node):
-        """Visit a ``ClassDef`` node."""
-        return self._visit(node)
-
-    def visit_FunctionDef(self, node):
-        """Visit a ``FunctionDef`` node."""
-        return self._visit(node)
-
-    visit_AsyncFunctionDef = visit_FunctionDef
-
     def _visit(self, node):
         return ast.fix_missing_locations(self.inject(node))
+
+    visit_ClassDef = partial(_visit)
+    visit_ClassDef.__doc__ = 'Visit a ``ClassDef`` node.'
+    visit_FunctionDef = partial(_visit)
+    visit_FunctionDef.__doc__ = 'Visit a ``FunctionDef`` node.'
+    visit_AsyncFunctionDef = partial(_visit)
+    visit_AsyncFunctionDef.__doc__ = 'Visit an ``AsyncFunctionDef`` node.'
 
     def inject(self, node):
         """Inject the handler at the top of the target object."""
@@ -179,7 +178,8 @@ class HeadInjector(BaseInjector):
 class TailInjector(BaseInjector):
     """An injector that injects code at the bottom of the object.
 
-    **Usage**
+    :example:
+
         .. code-block:: python
 
             import os.path
@@ -210,26 +210,24 @@ class TailInjector(BaseInjector):
         """Visit a ``Module`` node.
 
         If the target object is a module then inject the handler in this node,
-        else keep traversing. This is because the root of the AST will be this
-        node for code parsed using the `exec` mode.
+        otherwise keep traversing. The root of the AST will always be a
+        `Module`; therefore, if the target is something different then we skip
+        this visit.
         """
         if self.is_target_module():
             return self._visit(node)
         self.generic_visit(node)
         return node
 
-    def visit_ClassDef(self, node):
-        """Visit a ``ClassDef`` node."""
-        return self._visit(node)
-
-    def visit_FunctionDef(self, node):
-        """Visit a ``FunctionDef`` node."""
-        return self._visit(node)
-
-    visit_AsyncFunctionDef = visit_FunctionDef
-
     def _visit(self, node):
         return ast.fix_missing_locations(self.inject(node))
+
+    visit_ClassDef = partial(_visit)
+    visit_ClassDef.__doc__ = 'Visit a ``ClassDef`` node.'
+    visit_FunctionDef = partial(_visit)
+    visit_FunctionDef.__doc__ = 'Visit a ``FunctionDef`` node.'
+    visit_AsyncFunctionDef = partial(_visit)
+    visit_AsyncFunctionDef.__doc__ = 'Visit an ``AsyncFunctionDef`` node.'
 
     def inject(self, node):
         """Inject the handler at the bottom of the target object."""
@@ -240,14 +238,12 @@ class TailInjector(BaseInjector):
 class ReturnInjector(BaseInjector):
     """An injector that injects code before a return statement.
 
-    Note: The ``ReturnInjector`` can only be used when the target is a
-    `function` or `method`.
+    :param ordinal: (optional) Zero-based index to choose the specific return
+        statement(s) to inject at. A single index or multiple indices may be
+        given.
 
-    Args:
-        ordinal: Optional zero-based index to choose specific point of injection.
-            Multiple indices can be given in the form of a list.
+    :example:
 
-    **Usage**
         .. code-block:: python
 
             import statistics
@@ -282,6 +278,10 @@ class ReturnInjector(BaseInjector):
                     seq = list(seq)
                     seq.append(10)
                     return staistics.mode(seq)
+
+    .. note::
+        The ``ReturnInjector`` can only be used when the target is a `function`
+        or `method`.
     """
 
     def __init__(self, ordinal=None, *args, **kwargs):
@@ -305,13 +305,15 @@ class ReturnInjector(BaseInjector):
 class FieldInjector(BaseInjector):
     """An injector that injects code at a field's assignment.
 
-    Args:
-        field: The field to inject at.
-        ordinal: Zero-based index to choose specific point of injection.
-        insert: Where to insert the handler's code relative to the target.
-            Options include 'before' and 'after'.
+    :param field: The field to inject at.
+    :param ordinal: (optional) Zero-based index to choose the specific return
+        statement(s) to inject at. A single index or multiple indices may be
+        given.
+    :param insert: (optional) Location to insert the handler's code relative to
+        the target. Options include 'before' and 'after'. Defaults to 'before'.
 
-    **Usage**
+    :example:
+
         .. code-block:: python
 
             from injectify import inject, FieldInjector
@@ -371,8 +373,7 @@ class FieldInjector(BaseInjector):
         return node
 
     def inject(self, node):
-        """Inject the handler at the assignment of the given field in the
-        target object."""
+        """Inject the handler at a field's assignment."""
         if self.insert == 'after':
             return ast.Module(body=[node, self.handler])
         else:
@@ -382,18 +383,15 @@ class FieldInjector(BaseInjector):
 class NestedInjector(BaseInjector):
     """An injector that injects code in a nested function.
 
-    Note: The ``NestedInjector`` can only be used when the target is a
-    `function` or `method`.
+    :param nested: Name of the nested function.
+    :param injector: Injector to use in the nested function.
 
-    Args:
-        nested: Name of the nested function.
-        injector: Injector to use in the nested function.
+    :example:
 
-    **Usage**
         .. code-block:: python
 
             from time import time
-            from injectify import inject, FieldInjector
+            from injectify import inject, NestedInjector, ReturnInjector
 
             def timing(f):
                 def wrapper(*args, **kwargs):
@@ -421,6 +419,10 @@ class NestedInjector(BaseInjector):
                     print('func:{!r} args:[{!r}, {!r}] took: {:2.f} sec'.format(
                         f.__name__, args, kwargs, te-ts))
                     return result
+
+    .. note::
+        The ``NestedInjector`` can only be used when the target is a `function`
+        or `method`.
     """
 
     def __init__(self, nested, injector, *args, **kwargs):
@@ -430,8 +432,7 @@ class NestedInjector(BaseInjector):
         self.injector = injector
 
     def prepare(self, target, handler):
-        """Prepares the injector and the nested injector with the given
-        parameters."""
+        """Prepare the injectors with the given parameters."""
         super().prepare(target, handler)
         self.injector.prepare(target, handler)
 

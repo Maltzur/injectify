@@ -21,9 +21,8 @@ repos:
       - id: flake8
         additional_dependencies:
           - flake8-absolute-import
-          - flake8-black
           - flake8-docstrings
-        args: [--ignore=BLK100]
+        args: ['--ignore=W503,D107']
   - repo: https://github.com/d-ryzhikov/pipenv-lock-pre-commit
     rev: 0.1.0
     hooks:

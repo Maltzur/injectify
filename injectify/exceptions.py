@@ -2,4 +2,7 @@
 
 
 class ClassFoundException(Exception):
-    pass
+    """Exception for when a class cannot be found.
+
+    Raised when a class cannot be found when getting the source code.
+    """

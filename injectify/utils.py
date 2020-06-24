@@ -4,7 +4,7 @@ import ast
 import inspect
 from textwrap import dedent
 
-from .inspect_mate import getsource
+from injectify.inspect_mate import getsource
 
 
 def parse_object(obj):
@@ -18,8 +18,11 @@ def parse_object(obj):
 
 
 def get_defining_class(obj):
-    """Return the class that defines the given object or ``None`` if there is
-    no class."""
+    """Get the class that defines the given object.
+
+    :return: The defining class of the object or ``None`` if the class does not
+        exist.
+    """
     if inspect.ismethod(obj):
         for cls in inspect.getmro(obj.__self__.__class__):
             if cls.__dict__.get(obj.__name__) is obj:
@@ -55,7 +58,9 @@ def tryattrs(obj, *attrs):
 
 def caninject(obj):
     """Check whether the given object can be injected with code."""
-    return not (inspect.ismodule(obj)
-                or inspect.isclass(obj)
-                or inspect.ismethod(obj)
-                or inspect.isfunction(obj))
+    return not (
+        inspect.ismodule(obj)
+        or inspect.isclass(obj)
+        or inspect.ismethod(obj)
+        or inspect.isfunction(obj)
+    )

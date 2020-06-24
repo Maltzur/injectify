@@ -1,3 +1,5 @@
+"""Tests to make sure that static methods are injected as expected."""
+
 from injectify.api import inject
 from injectify.injectors import (
     HeadInjector,
@@ -9,6 +11,9 @@ from injectify.injectors import (
 
 
 def test_head_injector_correctly_injects_static_method():
+    """Test :class:`~injectify.injectors.HeadInjector` correctly injects a \
+    static method."""
+
     class Target:
         @staticmethod
         def target(x):
@@ -28,6 +33,9 @@ def test_head_injector_correctly_injects_static_method():
 
 
 def test_tail_injector_correctly_injects_static_method():
+    """Test :class:`~injectify.injectors.TailInjector` correctly injects a \
+    static method."""
+
     class Target:
         @staticmethod
         def target(x):
@@ -44,6 +52,9 @@ def test_tail_injector_correctly_injects_static_method():
 
 
 def test_return_injector_correctly_injects_static_method_all_returns():
+    """Test :class:`~injectify.injectors.ReturnInjector` correctly injects a \
+    static method before all return statements."""
+
     class Target:
         @staticmethod
         def target(x):
@@ -64,6 +75,9 @@ def test_return_injector_correctly_injects_static_method_all_returns():
 
 
 def test_return_injector_correctly_injects_static_method_ordinal_returns():
+    """Test :class:`~injectify.injectors.ReturnInjector` correctly injects a \
+    static method before an ordinal return statement."""
+
     class Target:
         @staticmethod
         def target(x):
@@ -84,6 +98,9 @@ def test_return_injector_correctly_injects_static_method_ordinal_returns():
 
 
 def test_field_injector_correctly_injects_static_method_before_all_fields():
+    """Test :class:`~injectify.injectors.FieldInjector` correctly injects a \
+    static method before all ``y`` fields."""
+
     class Target:
         @staticmethod
         def target(x):
@@ -103,6 +120,9 @@ def test_field_injector_correctly_injects_static_method_before_all_fields():
 
 
 def test_field_injector_correctly_injects_static_method_after_all_fields():
+    """Test :class:`~injectify.injectors.FieldInjector` correctly injects a \
+    static method after all ``y`` fields."""
+
     class Target:
         @staticmethod
         def target(x):
@@ -122,6 +142,9 @@ def test_field_injector_correctly_injects_static_method_after_all_fields():
 
 
 def test_field_injector_correctly_injects_static_method_before_ordinal_field():
+    """Test :class:`~injectify.injectors.FieldInjector` correctly injects a \
+    static method before an ordinal ``y`` field."""
+
     class Target:
         @staticmethod
         def target(x):
@@ -143,6 +166,9 @@ def test_field_injector_correctly_injects_static_method_before_ordinal_field():
 
 
 def test_field_injector_correctly_injects_static_method_after_ordinal_field():
+    """Test :class:`~injectify.injectors.FieldInjector` correctly injects a \
+    static method after an ordinal ``y`` field."""
+
     class Target:
         @staticmethod
         def target(x):
@@ -164,6 +190,9 @@ def test_field_injector_correctly_injects_static_method_after_ordinal_field():
 
 
 def test_nested_injector_correctly_injects_static_method():
+    """Test :class:`~injectify.injectors.NestedInjector` correctly injects a \
+    static method with a nested function."""
+
     class Target:
         @staticmethod
         def target(x):

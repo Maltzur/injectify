@@ -1,6 +1,7 @@
-"""
-``inspect_mate`` provides more methods to get information about class attribute
-than the standard library ``inspect``.
+"""Module that extends the built-in ``inspect`` module.
+
+``inspect_mate`` provides more methods to get information about class
+attribute than the standard library ``inspect``.
 
 Includes tester function to check:
 
@@ -22,17 +23,17 @@ import linecache
 from collections import deque
 from types import FunctionType
 
-from .exceptions import ClassFoundException
+from injectify.exceptions import ClassFoundException
 
 
 def is_attribute(klass, attr, value=None):
-    """Test if a value of a class is attribute. (Not a @property style
-    attribute)
+    """Test if a value of a class is an attribute.
 
-    Args:
-        klass: The class.
-        attr: Attribute name.
-        value: Attribute value.
+    Must not be a @property style attribute.
+
+    :param klass: the class
+    :param attr: attribute name
+    :param value: attribute value
     """
     if value is None:
         value = getattr(klass, attr)
@@ -47,10 +48,9 @@ def is_attribute(klass, attr, value=None):
 def is_property_method(klass, attr, value=None):
     """Test if a value of a class is @property style attribute.
 
-    Args:
-        klass: The class.
-        attr: Attribute name.
-        value: Attribute value.
+    :param klass: The class.
+    :param attr: Attribute name.
+    :param value: Attribute value.
     """
     if value is None:
         value = getattr(klass, attr)
@@ -65,18 +65,18 @@ def is_property_method(klass, attr, value=None):
 def is_regular_method(klass, attr, value=None):
     """Test if a value of a class is regular method.
 
-    Args:
-        klass: The class.
-        attr: Attribute name.
-        value: Attribute value.
+    :param klass: The class.
+    :param attr: Attribute name.
+    :param value: Attribute value.
     """
     if value is None:
         value = getattr(klass, attr)
     assert getattr(klass, attr) == value
 
     if inspect.isroutine(value):
-        if not is_static_method(klass, attr, value) \
-                and not is_class_method(klass, attr, value):
+        if not is_static_method(klass, attr, value) and not is_class_method(
+            klass, attr, value
+        ):
             return True
 
     return False
@@ -85,10 +85,9 @@ def is_regular_method(klass, attr, value=None):
 def is_static_method(klass, attr, value=None):
     """Test if a value of a class is static method.
 
-    Args:
-        klass: The class.
-        attr: Attribute name.
-        value: Attribute value.
+    :param klass: The class.
+    :param attr: Attribute name.
+    :param value: Attribute value.
     """
     if value is None:
         value = getattr(klass, attr)
@@ -106,10 +105,9 @@ def is_static_method(klass, attr, value=None):
 def is_class_method(klass, attr, value=None):
     """Test if a value of a class is class method.
 
-    Args:
-        klass: The class.
-        attr: Attribute name.
-        value: Attribute value.
+    :param klass: The class.
+    :param attr: Attribute name.
+    :param value: Attribute value.
     """
     if value is None:
         value = getattr(klass, attr)
@@ -125,13 +123,12 @@ def is_class_method(klass, attr, value=None):
 
 
 def _get_members(klass, tester_func, return_builtin):
-    """
+    """Get the members of a class.
 
-    Args:
-        klass: The class.
-        tester_func: Function to test.
-        allow_builtin: If ``False``, built-in variable or method such as
-            ``__name__``, ``__init__`` will not be returned.
+    :param klass: The class.
+    :param tester_func: Function to test.
+    :param allow_builtin: If ``False``, built-in variable or method such as
+        ``__name__``, ``__init__`` will not be returned.
     """
     if not inspect.isclass(klass):
         raise ValueError
@@ -149,23 +146,28 @@ def _get_members(klass, tester_func, return_builtin):
 
 
 get_attributes = functools.partial(
-    _get_members, tester_func=is_attribute, return_builtin=False)
+    _get_members, tester_func=is_attribute, return_builtin=False
+)
 get_attributes.__doc__ = 'Get all class attributes members.'
 
 get_property_methods = functools.partial(
-    _get_members, tester_func=is_property_method, return_builtin=False)
+    _get_members, tester_func=is_property_method, return_builtin=False
+)
 get_property_methods.__doc__ = 'Get all property style attributes members.'
 
 get_regular_methods = functools.partial(
-    _get_members, tester_func=is_regular_method, return_builtin=False)
+    _get_members, tester_func=is_regular_method, return_builtin=False
+)
 get_regular_methods.__doc__ = 'Get all non static and class method members'
 
 get_static_methods = functools.partial(
-    _get_members, tester_func=is_static_method, return_builtin=False)
+    _get_members, tester_func=is_static_method, return_builtin=False
+)
 get_static_methods.__doc__ = 'Get all static method attributes members.'
 
 get_class_methods = functools.partial(
-    _get_members, tester_func=is_class_method, return_builtin=False)
+    _get_members, tester_func=is_class_method, return_builtin=False
+)
 get_class_methods.__doc__ = 'Get all class method attributes members.'
 
 
@@ -175,8 +177,7 @@ def get_all_attributes(klass):
         raise ValueError
 
     pairs = list()
-    for attr, value in inspect.getmembers(
-            klass, lambda x: not inspect.isroutine(x)):
+    for attr, value in inspect.getmembers(klass, lambda x: not inspect.isroutine(x)):
         if not (attr.startswith('__') or attr.endswith('__')):
             pairs.append((attr, value))
     return pairs
@@ -188,8 +189,7 @@ def get_all_methods(klass):
         raise ValueError
 
     pairs = list()
-    for attr, value in inspect.getmembers(
-            klass, lambda x: inspect.isroutine(x)):
+    for attr, value in inspect.getmembers(klass, lambda x: inspect.isroutine(x)):
         if not (attr.startswith('__') or attr.endswith('__')):
             pairs.append((attr, value))
     return pairs
@@ -205,7 +205,6 @@ def extract_wrapped(decorated):
 
 
 class _ClassFinder(ast.NodeVisitor):
-
     def __init__(self, qualname):
         self.stack = deque()
         self.qualname = qualname

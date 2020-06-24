@@ -1,3 +1,5 @@
+"""Tests to make sure that functions are injected as expected."""
+
 from injectify.api import inject
 from injectify.injectors import (
     HeadInjector,
@@ -9,6 +11,9 @@ from injectify.injectors import (
 
 
 def test_head_injector_correctly_injects_function():
+    """Test :class:`~injectify.injectors.HeadInjector` correctly injects a \
+    function."""
+
     def target(x):
         a = 10
         if x > a:
@@ -25,6 +30,9 @@ def test_head_injector_correctly_injects_function():
 
 
 def test_tail_injector_correctly_injects_function():
+    """Test :class:`~injectify.injectors.TailInjector` correctly injects a \
+    function."""
+
     def target(x):
         if x > 100:
             return x
@@ -38,6 +46,9 @@ def test_tail_injector_correctly_injects_function():
 
 
 def test_return_injector_correctly_injects_function_all_returns():
+    """Test :class:`~injectify.injectors.ReturnInjector` correctly injects a \
+    function before all return statements."""
+
     def target(x):
         if x > 100:
             y = x * 2
@@ -55,6 +66,9 @@ def test_return_injector_correctly_injects_function_all_returns():
 
 
 def test_return_injector_correctly_injects_function_ordinal_returns():
+    """Test :class:`~injectify.injectors.ReturnInjector` correctly injects a \
+    function before an ordinal return statement."""
+
     def target(x):
         if x > 100:
             y = x * 2
@@ -72,6 +86,9 @@ def test_return_injector_correctly_injects_function_ordinal_returns():
 
 
 def test_field_injector_correctly_injects_function_before_all_fields():
+    """Test :class:`~injectify.injectors.FieldInjector` correctly injects a \
+    function before all ``y`` fields."""
+
     def target(x):
         if x > 100:
             y = x * 2
@@ -88,6 +105,9 @@ def test_field_injector_correctly_injects_function_before_all_fields():
 
 
 def test_field_injector_correctly_injects_function_after_all_fields():
+    """Test :class:`~injectify.injectors.FieldInjector` correctly injects a \
+    function after all ``y`` fields."""
+
     def target(x):
         if x > 100:
             y = x * 2
@@ -104,6 +124,9 @@ def test_field_injector_correctly_injects_function_after_all_fields():
 
 
 def test_field_injector_correctly_injects_function_before_ordinal_field():
+    """Test :class:`~injectify.injectors.FieldInjector` correctly injects a \
+    function before an ordinal ``y`` field."""
+
     def target(x):
         if x > 100:
             y = x * 2
@@ -122,6 +145,9 @@ def test_field_injector_correctly_injects_function_before_ordinal_field():
 
 
 def test_field_injector_correctly_injects_function_after_ordinal_field():
+    """Test :class:`~injectify.injectors.FieldInjector` correctly injects a \
+    function after an ordinal ``y`` field."""
+
     def target(x):
         if x > 100:
             y = x * 2
@@ -138,6 +164,9 @@ def test_field_injector_correctly_injects_function_after_ordinal_field():
 
 
 def test_nested_injector_correctly_injects_function():
+    """Test :class:`~injectify.injectors.NestedInjector` correctly injects a \
+    function with a nested function."""
+
     def target(x):
         def nested(y):
             if y > 100:
