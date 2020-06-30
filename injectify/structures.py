@@ -11,12 +11,10 @@ class listify(list):
     """
 
     def __init__(self, initlist):
-        self.data = []
-
         if initlist is not None:
             if isinstance(initlist, list):
-                self.data[:] = initlist
+                self[:] = initlist
             elif isinstance(initlist, Sequence):
-                self.data = list(initlist)
+                self[:] = list(initlist)
             else:
-                self.data.append(initlist)
+                self.append(initlist)
