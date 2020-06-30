@@ -11,14 +11,8 @@ cache: pip
 jobs:
   include:
     - stage: test
-      python: '3.5'
-    - stage: test
       python: '3.6'
     - stage: test
       python: '3.7'
     - stage: test
       python: '3.8'
-    # Travis pypy3 excluded as outdated.
-    # - stage: test
-    #   python: 'pypy3'
-    #   dist: xenial
