@@ -4,9 +4,9 @@ import ast
 import inspect
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from functools import partial
 
 import astunparse
+from makefun import partial
 
 from injectify.inspect_mate import extract_wrapped, getsource
 from injectify.structures import listify
@@ -436,14 +436,16 @@ class NestedInjector(BaseInjector):
         super().prepare(target, handler)
         self.injector.prepare(target, handler)
 
-    def visit_FunctionDef(self, node):
-        """Visit a ``FunctionDef`` node."""
+    def _visit(self, node):
         if node.name == self.nested:
             return ast.fix_missing_locations(self.inject(node))
         self.generic_visit(node)
         return node
 
-    visit_AsyncFunctionDef = visit_FunctionDef
+    visit_FunctionDef = partial(_visit)
+    visit_FunctionDef.__doc__ = 'Visit a ``FunctionDef`` node.'
+    visit_AsyncFunctionDef = partial(_visit)
+    visit_AsyncFunctionDef.__doc__ = 'Visit an ``AsyncFunctionDef`` node.'
 
     def inject(self, node):
         """Inject the handler into the nested function with the given injector."""

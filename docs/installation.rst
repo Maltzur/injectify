@@ -12,6 +12,7 @@ Dependencies
 These packages will be installed automatically with Injectify.
 
 * `astunparse`_ is an AST unparser for Python.
+* `makefun`_ is a library to dynamically create functions.
 
 Pipenv
 ------
@@ -72,4 +73,5 @@ Injectify is now installed. Check out the :doc:`/quickstart` or go to the
 :doc:`Documentation Overview </index>`.
 
 .. _astunparse: https://github.com/simonpercivall/astunparse
+.. _makefun: https://smarie.github.io/python-makefun/
 .. _pipenv: https://pipenv.kennethreitz.org

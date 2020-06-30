@@ -6,6 +6,7 @@ from setuptools import setup
 
 requirements = [
     'astunparse>=1.1.0',
+    'makefun>=1.6.0',
 ]
 
 about = {}
