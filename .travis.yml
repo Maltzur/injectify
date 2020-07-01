@@ -1,12 +1,4 @@
 language: python
-# command to install dependencies
-install: make
-# command to run tests
-script:
-  - make test-readme
-  - make ci
-after_success:
-  - codecov
 cache: pip
 jobs:
   include:
@@ -16,3 +8,24 @@ jobs:
       python: '3.7'
     - stage: test
       python: '3.8'
+# Install dependencies
+install: make
+# Run tests
+script:
+  - make test-readme
+  - make ci
+after_success:
+  - codecov
+deploy:
+  # Deploy on PyPI on tags
+  - provider: pypi
+    user: Maltzur
+    password:
+      secure: iYUjNTGdaNQf4hgnEeaq7Onk6sFS+D9OwQrZIh2A+7M2wGe4eaKBsn7bsjEEnzavmOc1YRRlwuKgbWk6qEJa70zxZh8xRGpwfV0Cu7QYzGEZgmh8V4Vi9fpU2qwxE//gf6Dco7dLFT/zMKtcUQL1Hux1UKKCOdZFEcyW1HdJaJzIqwiI23vBKxoEIfWPmqWKyTyXbJq0eFI+4dxASdh6Hl7ZgEDUGM0G9p+T1hPODuFpQUE7LUoyDRwcPV81H/Skhpb2pETbj6RI75oBmik8SpmRYKQCuG+kQK3JFJex8v7IcFYg/rThitbXX6VHIGg3eZufSCe4IAjGso8Ra78VzzuXjMtAlNJ787SOXTQMnAW4GHRY190d3GfPHgfmHtbBw95SCXwnZS4yPbTV1fOpt2P90HierF9utW5wdUIT8WwdZeT6wq6fESmHBCDirZqBAxoPt0tGBXQmriy1770NumjJpPfMxqF07u0sDfdrotflMC7r/BYVfyT/aqwEWMXAeO0/Wlkh7C1k/imj1bw4Hkj8ucEuVecuvbiwFPa0A70xhVV2JNwgNqXFsw9WnyRiKLJvIdnPTw4A+QD0dUD1ohnTkOQl3T3cG9wQ2YtQF73QmHfcDd2CaqLyB/nsh5k4TAJLCoTwdenWscwnEf3TtHIBeoZQronPpthuXCZI8KU=
+    on:
+      tags: true
+      python: 3.6  # only one of the builds have to be deployed
+    distributions: 'sdist bdist_wheel'
+notifications:
+  email:
+    on_success: never  # options: [always|never|change] default: always
